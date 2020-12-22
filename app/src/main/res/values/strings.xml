@@ -3,4 +3,8 @@
     <string name="connected">Connected</string>
     <string name="turnon">Turn ON</string>
     <string name="turnoff">Turn OFF</string>
+    <string name="status">STATUS:</string>
+    <string name="buffer">BUFFER:</string>
+    <string name="msg">MESSAGE:</string>
+    <string name="init">....</string>
 </resources>

@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     Button btTurn, btPaired, btDiscover;
-    TextView tvStatus, tvBuffer;
+    TextView tvStatus, tvBuffer; //, tvMsg;
     CheckBox cbLed;
     ListView lvDevices;
 
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         tvStatus = (TextView) findViewById(R.id.tvStatus);
         tvBuffer = (TextView) findViewById(R.id.tvBuffer);
+        //tvMsg = (TextView) findViewById(R.id.tvMsg);
         btTurn = (Button) findViewById(R.id.btTurn);
         btDiscover = (Button) findViewById(R.id.btDiscover);
         btPaired = (Button) findViewById(R.id.btPaired);
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             // Device does not support Bluetooth
             tvStatus.setText("Status: Bluetooth not found");
             Toast.makeText(getApplicationContext(),"Bluetooth device not found!",Toast.LENGTH_SHORT).show();
+            //tvMsg.setText("Bluetooth device not found!");
         }
         else {
 
@@ -192,10 +194,13 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             tvStatus.setText("Bluetooth enabled");
             Toast.makeText(getApplicationContext(),"Bluetooth turned on",Toast.LENGTH_SHORT).show();
-
+            //tvMsg.setText("Bluetooth turned on");
+            //listPairedDevices();
+            discover();
         }
         else{
             Toast.makeText(getApplicationContext(),"Bluetooth is already on", Toast.LENGTH_SHORT).show();
+            //tvMsg.setText("Bluetooth is already on");
         }
     }
 
@@ -219,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
         mBTAdapter.disable(); // turn off
         tvStatus.setText("Bluetooth disabled");
         Toast.makeText(getApplicationContext(),"Bluetooth turned Off", Toast.LENGTH_SHORT).show();
+        //tvMsg.setText("Bluetooth turned Off");
+        mBTAdapter.cancelDiscovery();
+        mBTArrayAdapter.clear();
     }
 
     private void discover(){
