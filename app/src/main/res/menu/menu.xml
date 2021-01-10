@@ -5,7 +5,19 @@
     <item android:id="@+id/iConnected"
         android:icon="@drawable/ic_bluetooth_turn_off"
         app:showAsAction="always"
-        android:orderInCategory="0"
+        android:orderInCategory="2"
         android:title="@string/connected" />
+
+    <item android:id="@+id/iSearch"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="always"
+        android:orderInCategory="1"
+        android:title="@string/search" />
+
+    <item android:id="@+id/iInfo"
+        android:icon="@drawable/ic_info"
+        app:showAsAction="always"
+        android:orderInCategory="0"
+        android:title="@string/search" />
 
 </menu>

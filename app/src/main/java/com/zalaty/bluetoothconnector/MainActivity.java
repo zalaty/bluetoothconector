@@ -15,9 +15,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,7 +27,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private final static int CONNECTING_STATUS = 3; // used in bluetooth handler to identify message status
 
 
-    Button btTurn, btPaired, btDiscover;
+    Button btTurn, btScan;
+    Button btnA, btnB, btnC, btnD, btnE, btnF;
     TextView tvStatus, tvBuffer;
-    CheckBox cbLed;
     ListView lvDevices;
 
     Menu iConnected;
@@ -75,9 +76,13 @@ public class MainActivity extends AppCompatActivity {
         tvStatus = (TextView) findViewById(R.id.tvStatus);
         tvBuffer = (TextView) findViewById(R.id.tvBuffer);
         btTurn = (Button) findViewById(R.id.btTurn);
-        btDiscover = (Button) findViewById(R.id.btDiscover);
-        btPaired = (Button) findViewById(R.id.btPaired);
-        cbLed = (CheckBox)findViewById(R.id.cbLed);
+        btScan = (Button) findViewById(R.id.btScan);
+        btnA = (Button) findViewById(R.id.btnA);
+        btnB = (Button) findViewById(R.id.btnB);
+        btnC = (Button) findViewById(R.id.btnC);
+        btnD = (Button) findViewById(R.id.btnD);
+        btnE = (Button) findViewById(R.id.btnE);
+        btnF = (Button) findViewById(R.id.btnF);
 
         mBTArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         mBTAdapter = BluetoothAdapter.getDefaultAdapter(); // get a handle on the bluetooth radio
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         lvDevices.setAdapter(mBTArrayAdapter); // assign model to view
         lvDevices.setOnItemClickListener(mDeviceClickListener);
 
+        bluetoothOff();
 
         // Ask for location permission if not already allowed
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -118,38 +124,59 @@ public class MainActivity extends AppCompatActivity {
             // Device does not support Bluetooth
             tvStatus.setText("Status: Bluetooth not found");
             Toast.makeText(getApplicationContext(),"Bluetooth device not found!",Toast.LENGTH_SHORT).show();
+
         }
-        else {
 
-            cbLed.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    if(mConnectedThread != null) //First check to make sure thread created
-                        mConnectedThread.write("1");
-                }
-            });
+        btTurn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SwitchTurn();
+            }
+        });
 
-            btTurn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SwitchTurn();
-                }
-            });
+        btScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                discover();
+            }
+        });
 
-            btPaired.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v){
-                    listPairedDevices();
-                }
-            });
-
-            btDiscover.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    discover();
-                }
-            });
-        }
+        btnA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("1");
+            }
+        });
+        btnB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("2");
+            }
+        });
+        btnC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("3");
+            }
+        });
+        btnD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("4");
+            }
+        });
+        btnE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("5");
+            }
+        });
+        btnF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("6");
+            }
+        });
     }
 
     @Override
@@ -166,6 +193,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.iConnected:
                 SwitchTurn();
                 break;
+            case R.id.iSearch:
+                discover();
+                break;
+            case R.id.iInfo:
+                info();
+                break;
 
         }
 
@@ -176,12 +209,12 @@ public class MainActivity extends AppCompatActivity {
         if (switchTurn.equals(0)){
             switchTurn = 1;
             btTurn.setText(R.string.turnoff);
-            iConnected.getItem(0).setIcon(R.drawable.ic_bluetooth_turn_on);
+            iConnected.getItem(2).setIcon(R.drawable.ic_bluetooth_turn_on);
             bluetoothOn();
         }else if (switchTurn.equals(1)){
             switchTurn = 0;
             btTurn.setText(R.string.turnon);
-            iConnected.getItem(0).setIcon(R.drawable.ic_bluetooth_turn_off);
+            iConnected.getItem(2).setIcon(R.drawable.ic_bluetooth_turn_off);
             bluetoothOff();
         }
     }
@@ -192,11 +225,12 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             tvStatus.setText("Bluetooth enabled");
             Toast.makeText(getApplicationContext(),"Bluetooth turned on",Toast.LENGTH_SHORT).show();
-
+            discover();
         }
         else{
             Toast.makeText(getApplicationContext(),"Bluetooth is already on", Toast.LENGTH_SHORT).show();
         }
+        enableButton(true);
     }
 
     // Enter here after user selects "yes" or "no" to enabling radio
@@ -219,6 +253,10 @@ public class MainActivity extends AppCompatActivity {
         mBTAdapter.disable(); // turn off
         tvStatus.setText("Bluetooth disabled");
         Toast.makeText(getApplicationContext(),"Bluetooth turned Off", Toast.LENGTH_SHORT).show();
+        //tvMsg.setText("Bluetooth turned Off");
+        mBTAdapter.cancelDiscovery();
+        mBTArrayAdapter.clear();
+        enableButton(false);
     }
 
     private void discover(){
@@ -252,20 +290,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
-    private void listPairedDevices(){
-        mBTArrayAdapter.clear();
-        mPairedDevices = mBTAdapter.getBondedDevices();
-        if(mBTAdapter.isEnabled()) {
-            // put it's one to the adapter
-            for (BluetoothDevice device : mPairedDevices)
-                mBTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-
-            Toast.makeText(getApplicationContext(), "Show Paired Devices", Toast.LENGTH_SHORT).show();
-        }
-        else
-            Toast.makeText(getApplicationContext(), "Bluetooth not on", Toast.LENGTH_SHORT).show();
-    }
 
     private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -331,5 +355,34 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "Could not create Insecure RFComm Connection",e);
         }
         return  device.createRfcommSocketToServiceRecord(BT_MODULE_UUID);
+    }
+
+    private void info(){
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View infoDialogView = factory.inflate(R.layout.custom_dialog, null);
+        final AlertDialog infoDialog = new AlertDialog.Builder(this).create();
+        infoDialog.setView(infoDialogView);
+        infoDialogView.findViewById(R.id.btnOk).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoDialog.dismiss();
+            }
+        });
+        infoDialog.show();
+    }
+
+    private void sendString(String sendString){
+        if(mConnectedThread != null) //First check to make sure thread created
+            mConnectedThread.write(sendString);
+    }
+
+    private void enableButton(boolean enableButton){
+        btScan.setEnabled(enableButton);
+        btnA.setEnabled(enableButton);
+        btnB.setEnabled(enableButton);
+        btnC.setEnabled(enableButton);
+        btnD.setEnabled(enableButton);
+        btnE.setEnabled(enableButton);
+        btnF.setEnabled(enableButton);
     }
 }

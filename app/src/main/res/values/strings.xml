@@ -1,6 +1,30 @@
 <resources>
     <string name="app_name">Bluetooth Connector</string>
     <string name="connected">Connected</string>
+    <string name="search">Search</string>
     <string name="turnon">Turn ON</string>
     <string name="turnoff">Turn OFF</string>
+    <string name="status">STATUS:</string>
+    <string name="buffer">BUFFER:</string>
+    <string name="msg">MESSAGE:</string>
+    <string name="init">....</string>
+    <string name="bluetoothdevicesfound">Bluetooth devices found</string>
+    <string name="a">A</string>
+    <string name="infoa">Button A send the string "1"</string>
+    <string name="infob">Button B send the string "2"</string>
+    <string name="infoc">Button C send the string "3"</string>
+    <string name="infod">Button D send the string "4"</string>
+    <string name="infoe">Button E send the string "5"</string>
+    <string name="infof">Button F send the string "6"</string>
+    <string name="b">B</string>
+    <string name="c">C</string>
+    <string name="d">D</string>
+    <string name="e">E</string>
+    <string name="f">F</string>
+    <string name="info">info</string>
+    <string name="infodavid">David Salado Fornell</string>
+    <string name="infotext">Si tienes alguna sugerencias, puedes contactarme:</string>
+    <string name="infoemail"> david.salfor@gmail.com</string>
+    <string name="infogracias">Gracias</string>
+    <string name="ok">Ok</string>
 </resources>
